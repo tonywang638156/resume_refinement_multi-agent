@@ -8,7 +8,7 @@
 
 - **🧠 User Memory**  
   Stores user preferences such as preferred brands, maximum budget, shipping options, etc.  
-  Example: "Prefers Apple over Samsung", "Budget under $200", "Prime shipping only".
+  *Example:* "Prefers Apple over Samsung", "Budget under $200", "Prime shipping only".
 
 - **🕵️ Autonomous Browsing**  
   Uses Playwright or Selenium to navigate Amazon, search for items, and collect product data.
@@ -38,12 +38,36 @@
 - Finalized the use case and project scope.
 - Defined the core features and architecture of the system.
 - Researched:
-  - Amazon's dynamic DOM structure and anti-bot defenses
-  - Feasibility of using Playwright/Selenium for Amazon interactions
-  - Secure handling of login, sessions, and payment simulation
-- Explored strategies for persistent memory using JSON or local database.
+  - Amazon's dynamic DOM structure and anti-bot defenses.
+  - Feasibility of using Playwright/Selenium for Amazon interactions.
+  - Secure handling of login, sessions, and payment simulation.
+- Explored strategies for persistent memory using JSON or a local database.
 
 ### ⚠️ Challenges Identified
 - CAPTCHA protection and anti-bot detection mechanisms.
 - Handling login and payment securely in a test/demo environment.
 - Simulating human-like delays and behavior to avoid being blocked.
+
+---
+
+## 🗓️ Week 2 Progress
+
+### ✅ Completed Tasks
+
+#### Developed User Preferences Module
+- Implemented a JSON-based storage system to persist user preferences like brand, budget, and shipping speed.
+- Integrated a simple preference loader and updater.
+
+#### Prototyped Amazon Scraper with Playwright
+- Built a Playwright-based scraper to navigate Amazon, search for products, and extract relevant details:
+  - Title
+  - Price
+  - Rating
+  - Delivery time
+  - Badges (Amazon’s Choice, Best Seller)
+- Added random delays between actions to simulate human-like browsing.
+
+### ⚠️ Challenges Identified
+- Occasional detection by Amazon’s bot defenses during repeated scraping.
+- Complex DOM structures requiring frequent selector adjustments.
+- Handling dynamic price formats and shipping conditions.
