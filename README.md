@@ -71,3 +71,19 @@
 - Occasional detection by Amazon’s bot defenses during repeated scraping.
 - Complex DOM structures requiring frequent selector adjustments.
 - Handling dynamic price formats and shipping conditions.
+
+## 🗓️ Week 3 Progress
+
+### ✅ Completed Tasks
+
+#### Enhanced Anti-Bot Handling
+- Integrated rotating user-agent strings and randomized delays between requests to reduce detection by Amazon's anti-bot systems.
+- Added CAPTCHA detection and implemented a fallback mechanism to pause scraping and request manual intervention.
+
+#### Implemented Login Session Management
+- Developed secure session management using Playwright’s persistent context to maintain login state across multiple browsing sessions.
+- Encrypted session cookies to protect user data in the test environment.
+
+### ⚠️ Challenges Identified
+- CAPTCHA solving is still manual; automating this step is complicated due to legal and ethical considerations.
+- Dynamic pricing and frequent layout changes on Amazon require constant maintenance of scraping selectors.
