@@ -1,0 +1,6 @@
+crewai
+crewai-tools
+openai
+python-dotenv  # (optional, if you want to load API keys from a .env file)
+requests
+beautifulsoup4
