@@ -1,6 +1,10 @@
 crewai
-crewai-tools
+crewai_tools
+langchain_community==0.0.29
+langchain
+serpapi
 openai
-python-dotenv  # (optional, if you want to load API keys from a .env file)
+python-dotenv  
 requests
 beautifulsoup4
+#crewai[tools]
