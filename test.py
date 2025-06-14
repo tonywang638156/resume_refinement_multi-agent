@@ -1,85 +1,199 @@
-import os
+# Warning control
 import warnings
-from dotenv import load_dotenv, find_dotenv
-
 warnings.filterwarnings('ignore')
-
 from crewai import Agent, Task, Crew
-from crewai_tools import (
-    DirectoryReadTool,
-    FileReadTool,
-    SerperDevTool,
-    WebsiteSearchTool
-)
+import os
 
-# === Load environment variables ===
-def load_env():
-    load_dotenv(find_dotenv())
 
-load_env()
-
-# Get API keys from environment
+os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
 openai_api_key = os.getenv("OPENAI_API_KEY")
 serper_api_key = os.getenv("SERPER_API_KEY")
 
-if not openai_api_key:
-    raise ValueError("OPENAI_API_KEY not set in environment variables or .env file.")
-if not serper_api_key:
-    raise ValueError("SERPER_API_KEY not set in environment variables or .env file.")
+from crewai_tools import (
+  FileReadTool,
+  ScrapeWebsiteTool,
+  MDXSearchTool,
+  SerperDevTool
+)
 
-# Set them into os.environ if needed for downstream tools
-os.environ["OPENAI_API_KEY"] = openai_api_key
-os.environ["SERPER_API_KEY"] = serper_api_key
-# print(f"Using API key: {serper_api_key}")
-# print(f"Using API key: {openai_api_key}")
-
-# === Instantiate tools ===
-docs_tool = DirectoryReadTool(directory='./blog-posts')
-file_tool = FileReadTool()
 search_tool = SerperDevTool()
-web_rag_tool = WebsiteSearchTool()
+scrape_tool = ScrapeWebsiteTool()
+read_resume = FileReadTool(file_path='./fake_resume.md')
+semantic_search_resume = MDXSearchTool(mdx='./fake_resume.md')
 
-# === Create agents ===
+# Agent 1: Researcher
 researcher = Agent(
-    role='Market Research Analyst',
-    goal='Provide up-to-date market analysis of the AI industry',
-    backstory='An expert analyst with a keen eye for market trends.',
-    tools=[search_tool, web_rag_tool],
-    verbose=True
-)
-
-writer = Agent(
-    role='Content Writer',
-    goal='Craft engaging blog posts about the AI industry',
-    backstory='A skilled writer with a passion for technology.',
-    tools=[docs_tool, file_tool],
-    verbose=True
-)
-
-# === Define tasks ===
-research = Task(
-    description='Research the latest trends in the AI industry and provide a summary.',
-    expected_output='A summary of the top 3 trending developments in the AI industry with a unique perspective on their significance.',
-    agent=researcher
-)
-
-write = Task(
-    description=(
-        "Write an engaging blog post about the AI industry, based on the research analyst's summary. "
-        "Draw inspiration from the latest blog posts in the directory."
-    ),
-    expected_output='A 4-paragraph blog post formatted in markdown with engaging, informative, and accessible content, avoiding complex jargon.',
-    agent=writer,
-    output_file='blog-posts/new_post.md'
-)
-
-# === Assemble and execute crew ===
-crew = Crew(
-    agents=[researcher, writer],
-    tasks=[research, write],
+    role="Tech Job Researcher",
+    goal="Make sure to do amazing analysis on "
+         "job posting to help job applicants",
+    tools = [scrape_tool, search_tool],
     verbose=True,
-    planning=True
+    backstory=(
+        "As a Job Researcher, your prowess in "
+        "navigating and extracting critical "
+        "information from job postings is unmatched."
+        "Your skills help pinpoint the necessary "
+        "qualifications and skills sought "
+        "by employers, forming the foundation for "
+        "effective application tailoring."
+    )
 )
 
-# === Kickoff ===
-crew.kickoff()
+# Agent 2: Profiler
+profiler = Agent(
+    role="Personal Profiler for Engineers",
+    goal="Do increditble research on job applicants "
+         "to help them stand out in the job market",
+    tools = [scrape_tool, search_tool,
+             read_resume, semantic_search_resume],
+    verbose=True,
+    backstory=(
+        "Equipped with analytical prowess, you dissect "
+        "and synthesize information "
+        "from diverse sources to craft comprehensive "
+        "personal and professional profiles, laying the "
+        "groundwork for personalized resume enhancements."
+    )
+)
+
+# Agent 3: Resume Strategist
+resume_strategist = Agent(
+    role="Resume Strategist for Engineers",
+    goal="Find all the best ways to make a "
+         "resume stand out in the job market.",
+    tools = [scrape_tool, search_tool,
+             read_resume, semantic_search_resume],
+    verbose=True,
+    backstory=(
+        "With a strategic mind and an eye for detail, you "
+        "excel at refining resumes to highlight the most "
+        "relevant skills and experiences, ensuring they "
+        "resonate perfectly with the job's requirements."
+    )
+)
+
+
+# Agent 4: Interview Preparer
+interview_preparer = Agent(
+    role="Engineering Interview Preparer",
+    goal="Create interview questions and talking points "
+         "based on the resume and job requirements",
+    tools = [scrape_tool, search_tool,
+             read_resume, semantic_search_resume],
+    verbose=True,
+    backstory=(
+        "Your role is crucial in anticipating the dynamics of "
+        "interviews. With your ability to formulate key questions "
+        "and talking points, you prepare candidates for success, "
+        "ensuring they can confidently address all aspects of the "
+        "job they are applying for."
+    )
+)
+
+# Task for Researcher Agent: Extract Job Requirements
+research_task = Task(
+    description=(
+        "Analyze the job posting URL provided ({job_posting_url}) "
+        "to extract key skills, experiences, and qualifications "
+        "required. Use the tools to gather content and identify "
+        "and categorize the requirements."
+    ),
+    expected_output=(
+        "A structured list of job requirements, including necessary "
+        "skills, qualifications, and experiences."
+    ),
+    agent=researcher,
+    async_execution=True
+)
+
+
+# Task for Profiler Agent: Compile Comprehensive Profile
+profile_task = Task(
+    description=(
+        "Compile a detailed personal and professional profile "
+        "using the GitHub ({github_url}) URLs, and personal write-up "
+        "({personal_writeup}). Utilize tools to extract and "
+        "synthesize information from these sources."
+    ),
+    expected_output=(
+        "A comprehensive profile document that includes skills, "
+        "project experiences, contributions, interests, and "
+        "communication style."
+    ),
+    agent=profiler,
+    async_execution=True
+)
+
+
+# Task for Resume Strategist Agent: Align Resume with Job Requirements
+resume_strategy_task = Task(
+    description=(
+        "Using the profile and job requirements obtained from "
+        "previous tasks, tailor the resume to highlight the most "
+        "relevant areas. Employ tools to adjust and enhance the "
+        "resume content. Make sure this is the best resume even but "
+        "don't make up any information. Update every section, "
+        "inlcuding the initial summary, work experience, skills, "
+        "and education. All to better reflrect the candidates "
+        "abilities and how it matches the job posting."
+    ),
+    expected_output=(
+        "An updated resume that effectively highlights the candidate's "
+        "qualifications and experiences relevant to the job."
+    ),
+    output_file="tailored_resume.md",
+    context=[research_task, profile_task],
+    agent=resume_strategist
+)
+
+
+# Task for Interview Preparer Agent: Develop Interview Materials
+interview_preparation_task = Task(
+    description=(
+        "Create a set of potential interview questions and talking "
+        "points based on the tailored resume and job requirements. "
+        "Utilize tools to generate relevant questions and discussion "
+        "points. Make sure to use these question and talking points to "
+        "help the candiadte highlight the main points of the resume "
+        "and how it matches the job posting."
+    ),
+    expected_output=(
+        "A document containing key questions and talking points "
+        "that the candidate should prepare for the initial interview."
+    ),
+    output_file="interview_materials.md",
+    context=[research_task, profile_task, resume_strategy_task],
+    agent=interview_preparer
+)
+
+
+job_application_crew = Crew(
+    agents=[researcher,
+            profiler,
+            resume_strategist,
+            interview_preparer],
+
+    tasks=[research_task,
+           profile_task,
+           resume_strategy_task,
+           interview_preparation_task],
+
+    verbose=True
+)
+
+job_application_inputs = {
+    'job_posting_url': 'https://jobs.lever.co/AIFund/6c82e23e-d954-4dd8-a734-c0c2c5ee00f1?lever-origin=applied&lever-source%5B%5D=AI+Fund',
+    'github_url': 'https://github.com/joaomdmoura',
+    'personal_writeup': """Noah is an accomplished Software
+    Engineering Leader with 18 years of experience, specializing in
+    managing remote and in-office teams, and expert in multiple
+    programming languages and frameworks. He holds an MBA and a strong
+    background in AI and data science. Noah has successfully led
+    major tech initiatives and startups, proving his ability to drive
+    innovation and growth in the tech industry. Ideal for leadership
+    roles that require a strategic and innovative approach."""
+}
+
+
+### this execution will take a few minutes to run
+result = job_application_crew.kickoff(inputs=job_application_inputs)
