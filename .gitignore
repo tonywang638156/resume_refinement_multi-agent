@@ -13,6 +13,9 @@ venv/
 # Database
 db/
 
+.dockerignore
+dockerfile
+
 # IDEs / editors
 .vscode/
 .idea/
