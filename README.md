@@ -2,7 +2,7 @@
 
 ## 📌 Project Description
 
-This project leverages a multi-agent AI system to **analyze job descriptions**, **refine resumes for maximum alignment**, and **prepare interview materials**. The system uses CrewAI to coordinate specialized agents (Job Researcher, Personal Profiler, Resume Strategist, Interview Preparer). It automates:
+This project leverages a multi-agent AI system to **analyze job descriptions**, **refine resumes for maximum alignment**, and **prepare interview materials**. The system coordinate specialized agents (Job Researcher, Personal Profiler, Resume Strategist, Interview Preparer). It automates:
 - Extracting job requirements.
 - Profiling the candidate’s skills and experience.
 - Tailoring the resume to match the job posting.
@@ -94,3 +94,92 @@ This project leverages a multi-agent AI system to **analyze job descriptions**, 
 - Minor inconsistencies in how agents phrase refined bullet points (may require post-processing or fine-tuning prompts).
 
 ---
+
+## 🗓️ Week 5 Progress
+
+### ✅ Completed Tasks
+
+#### 🏗️ Architecture & Deployment
+- **Dockerized the entire application** for reproducibility and deployment on AWS EC2.
+- Used **multi-stage Docker build** to minimize image size and exclude unnecessary files (`.dockerignore` covers secrets, local artifacts).
+- Deployed on EC2, exposed app via Streamlit with proper port forwarding (8501).
+
+#### ⚙️ Error Handling & Resilience
+- Added:
+  - API retry logic for external queries (search + scraping).
+  - Exception handling in agent task execution (graceful failover + logs).
+  - Input validation for user queries and resume files.
+
+#### 🚀 Performance & Scalability
+- Containerized architecture ensures horizontal scaling via Docker orchestration if needed.
+- Tested with concurrent agent executions to validate no crashes under load.
+
+#### 🔒 Security & Responsibility
+- No secrets hardcoded; all credentials via **.env** (kept out of Docker image when possible).
+- Minimal data persistence; no sensitive candidate data stored beyond session runtime.
+- AI outputs filtered for **non-biased, professional phrasing**.
+- Deployment hardened with AWS security group rules (only required ports open).
+
+#### 📄 Documentation
+- Started full **technical documentation**:
+  - Architecture diagrams.
+  - Agent design docs (roles, tools, dependencies).
+  - Deployment guide (EC2 + Docker + Streamlit).
+- Drafted **user manual**:
+  - How to provide input files.
+  - How to interpret outputs (`tailored_resume.md`, `interview_materials.md`).
+
+---
+
+
+
+## ⚡ Technical Highlights
+
+| Area | Details |
+|-------|---------|
+| **Architecture** | Multi-agent system with context-aware task chaining; Dockerized for cloud deployment |
+| **Code Quality** | Modularized Python code, clear separation of concerns, robust error handling |
+| **Performance** | Docker-based scaling, efficient API usage with retries |
+| **Error Handling** | API failures and data issues logged and handled gracefully |
+| **Security** | No sensitive data persisted; .env used for secrets; minimal EC2 exposure |
+
+---
+
+## 🚀 Deployment Guide
+
+### 1️⃣ Build the Docker image locally:  
+```bash
+docker build --platform=linux/amd64 -t resume-prep-app .
+```
+### 2️⃣ Save and transfer to EC2: 
+```bash
+docker save resume-prep-app > resume-prep-app.tar
+```
+```bash
+scp -i resume-refine-key.pem resume-prep-app.tar ec2-user@<EC2-IP>:~/
+```
+### On EC2:
+```bash
+docker load -i resume-prep-app.tar
+```
+```bash
+docker run -p 8501:8501 resume-prep-app
+```
+
+---
+## 🔑 Security Measures
+
+✅ **.env for secrets**  
+✅ **AWS security group hardened** (only port 8501 exposed)  
+✅ **No data retention** beyond session  
+✅ **Responsible AI:** outputs filtered to avoid bias, no hallucinated credentials  
+
+---
+
+## 📄 Compliance & Responsible AI
+
+- Privacy-preserving: no personal data stored.
+- No model fine-tuning on user data; only inference on supplied text.
+- Outputs reviewed to avoid unfair or biased phrasing.
+
+

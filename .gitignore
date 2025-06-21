@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+
+# Database
+db/
+
+.dockerignore
+dockerfile
+
+# IDEs / editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs / misc
+*.log
+
+# Backup files
+*.swp
+*.swo
+*~
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# Environment files
+.env
