@@ -2,6 +2,12 @@
 
 ## 📌 Project Description
 
+## 🌐 Project Demo
+
+- **Live Application:** [Visit the live app](http://54.87.62.251:8501)
+- **Video Presentation:** [Watch the demo video](https://youtu.be/-jQv7cNEvMQ)
+
+
 This project leverages a multi-agent AI system to **analyze job descriptions**, **refine resumes for maximum alignment**, and **prepare interview materials**. The system coordinate specialized agents (Job Researcher, Personal Profiler, Resume Strategist, Interview Preparer). It automates:
 - Extracting job requirements.
 - Profiling the candidate’s skills and experience.
@@ -176,10 +182,33 @@ docker run -p 8501:8501 resume-prep-app
 
 ---
 
-## 📄 Compliance & Responsible AI
+## 📋 Compliance Documentation
 
-- Privacy-preserving: no personal data stored.
-- No model fine-tuning on user data; only inference on supplied text.
-- Outputs reviewed to avoid unfair or biased phrasing.
+- **Data Privacy:** The system does not store or log personal data beyond the session. All files and inputs are ephemeral.  
+- **Security Practices:** Deployment secured via AWS security groups, API keys managed via `.env`.  
+- **Ethical AI:** All outputs reviewed or filtered to prevent bias, misrepresentation, or hallucination.  
+- **Institutional/Legal Compliance:** The system follows privacy best practices aligned with general data protection principles (e.g., no PII storage, no data sharing).
 
+---
+## 🧪 Testing & Validation
+
+- Implemented manual validation of agent tasks across multiple job postings, resumes, and GitHub profiles.
+- Verified end-to-end flow with different input variations to ensure reliability.
+- TODO: Add automated unit tests for utility functions (e.g., API key loaders, input validation functions).
+- Test coverage report: N/A (manual testing performed; future work includes adding `pytest`-based unit tests for core logic).
+
+---
+## 📌 API & Input/Output Documentation
+
+- **Inputs:**  
+  - `job_posting_url` (string) — Link to a valid job posting webpage  
+  - `github_url` (string) — Link to a valid GitHub repository  
+  - `personal_writeup` (string) — Short personal summary  
+  - `fake_resume.md` — Markdown file containing initial resume  
+
+- **Outputs:**  
+  - `tailored_resume.md` — Customized resume aligned to job description  
+  - `interview_materials.md` — Generated interview questions and talking points  
+
+- The system does not expose external API endpoints but works via internal agent task execution.
 
