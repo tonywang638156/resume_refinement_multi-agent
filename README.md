@@ -1,13 +1,13 @@
 # 📝 AI-Powered Resume Refinement & Interview Preparation Agent
 
-## 📌 Project Description
-
+---
 ## 🌐 Project Demo
-
+---
 - **Live Application:** [Visit the live app](http://54.87.62.251:8501)
 - **Video Presentation:** [Watch the demo video](https://youtu.be/-jQv7cNEvMQ)
-
-
+---
+## 📌 Project Description
+---
 This project leverages a multi-agent AI system to **analyze job descriptions**, **refine resumes for maximum alignment**, and **prepare interview materials**. The system coordinate specialized agents (Job Researcher, Personal Profiler, Resume Strategist, Interview Preparer). It automates:
 - Extracting job requirements.
 - Profiling the candidate’s skills and experience.
